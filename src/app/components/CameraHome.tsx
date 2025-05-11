@@ -12,6 +12,18 @@ const layouts = [
   { name: "Layout C", requiredImages: 4, component: LayoutC },
 ];
 
+const filters = [
+  { name: "None", css: "none", className: "" },
+  { name: "Grayscale", css: "grayscale(100%)", className: "grayscale" },
+  { name: "Sepia", css: "sepia(100%)", className: "sepia" },
+  { name: "Blur 1x", css: "blur(2px)", className: "blur-[2px]" },
+  {
+    name: "Retro Reddish",
+    css: "contrast(1.6) brightness(0.9) hue-rotate(-10deg) saturate(1.7)",
+    className: "contrast-[1.6] brightness-[0.9] hue-rotate-[-10deg] saturate-[1.7]",
+  }
+];
+
 const CameraHome: React.FC = () => {
   const [selectedLayout, setSelectedLayout] = useState<string | null>(null);
   const [images, setImages] = useState<string[]>([]);
@@ -78,17 +90,10 @@ const CameraHome: React.FC = () => {
         ctx.translate(width, 0);
         ctx.scale(-1, 1);
 
-        switch (selectedFilter) {
-          case "grayscale":
-            ctx.filter = "grayscale(100%)";
-            break;
-          case "sepia":
-            ctx.filter = "sepia(100%)";
-            break;
-          case "none":
-          default:
-            ctx.filter = "none";
-        }
+        const filterObj = filters.find(
+          (f) => f.name.toLowerCase() === selectedFilter
+        );
+        ctx.filter = filterObj?.css || "none";
 
         ctx.drawImage(video, 0, 0, width, height);
         const data = canvas.toDataURL("image/png");
@@ -109,8 +114,8 @@ const CameraHome: React.FC = () => {
     return <Component images={images} layoutRef={layoutRef} />;
   };
 
-  const handleFilterChange = (filter: string) => {
-    setSelectedFilter(filter);
+  const handleFilterChange = (filterName: string) => {
+    setSelectedFilter(filterName);
   };
 
   return (
@@ -145,7 +150,8 @@ const CameraHome: React.FC = () => {
             autoPlay
             playsInline
             className={`rounded border shadow transform -scale-x-100 ${
-              selectedFilter || ""
+              filters.find((f) => f.name.toLowerCase() === selectedFilter)
+                ?.className || ""
             }`}
           />
           <button
@@ -158,14 +164,14 @@ const CameraHome: React.FC = () => {
           <canvas ref={canvasRef} className="hidden" />
 
           <div className="flex space-x-3">
-            {["grayscale", "sepia", "none"].map((filter) => (
+            {filters.map((filter) => (
               <button
-                key={filter}
-                onClick={() => handleFilterChange(filter)}
+                key={filter.name}
+                onClick={() => handleFilterChange(filter.name.toLowerCase())}
                 className="bg-pink-400 text-white px-4 py-2 border border-pink-700 hover:bg-pink-500"
                 style={{ fontFamily: "'Press Start 2P', cursive" }}
               >
-                {filter.toUpperCase()}
+                {filter.name.toUpperCase()}
               </button>
             ))}
           </div>
