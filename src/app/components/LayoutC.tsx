@@ -1,13 +1,11 @@
-import React, { useRef } from "react";
-
+import React from "react";
 
 interface LayoutCProps {
   images: string[];
+  layoutRef: React.RefObject<HTMLDivElement>;
 }
 
-const LayoutC: React.FC<LayoutCProps> = ({ images }) => {
-  const layoutRef = useRef<HTMLDivElement | null>(null);
-
+const LayoutC: React.FC<LayoutCProps> = ({ images, layoutRef }) => {
   return (
     <div
       ref={layoutRef}
@@ -15,7 +13,7 @@ const LayoutC: React.FC<LayoutCProps> = ({ images }) => {
     >
       {/* Background template */}
       <img
-        src="/template-frame.png" // <-- place your template image in `public` as "template-frame.png"
+        src="/layoutC.png"
         alt="Template"
         className="absolute inset-0 w-full h-full object-cover"
       />
@@ -44,7 +42,6 @@ const LayoutC: React.FC<LayoutCProps> = ({ images }) => {
           )}
         </div>
       ))}
-
     </div>
   );
 };

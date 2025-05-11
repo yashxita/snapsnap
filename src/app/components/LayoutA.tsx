@@ -1,29 +1,53 @@
-import React, { useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
+
+// Utility to strip unsupported oklch colors
+function sanitizeOklchColors(element: HTMLElement) {
+  const allElements = element.querySelectorAll<HTMLElement>("*");
+
+  allElements.forEach((el) => {
+    const computedStyle = getComputedStyle(el);
+    for (const prop of [
+      "color",
+      "backgroundColor",
+      "borderColor",
+      "outlineColor",
+      "boxShadow",
+    ]) {
+      const value = computedStyle.getPropertyValue(prop);
+      if (value.includes("oklch")) {
+        el.style.setProperty(prop, "#000000", "important");
+      }
+    }
+  });
+}
 
 interface LayoutAProps {
   images: string[];
+  layoutRef: React.RefObject<HTMLDivElement>;
 }
 
-const LayoutA: React.FC<LayoutAProps> = ({ images }) => {
+const LayoutA: React.FC<LayoutAProps> = ({ images, layoutRef }) => {
   const [caption, setCaption] = useState("Jane & Johnny\n1-16-2019");
 
   return (
     <div className="flex flex-col items-center space-y-6">
-      {/* Caption Input */}
+      {/* Caption input - not included in download */}
       <input
         type="text"
         value={caption}
         onChange={(e) => setCaption(e.target.value)}
-        placeholder="Enter caption (e.g. Jane & Johnny\n1-16-2019)"
-        className="mb-4 px-3 py-2 border border-gray-300 rounded shadow-sm w-[250px] text-sm"
+        placeholder="Enter caption"
+        className="mb-4 px-3 py-2 border border-[#d1d5db] rounded shadow-sm w-[250px] text-sm"
+        style={{ color: "#000", backgroundColor: "#fff" }}
       />
 
-      {/* Two separate strips */}
-      <div className="flex space-x-8">
+      {/* Downloadable layout content */}
+      <div ref={layoutRef} className="flex space-x-8">
         {[0, 3].map((startIdx, stripIdx) => (
           <div
             key={stripIdx}
-            className="flex flex-col bg-black overflow-hidden w-[100px] h-[300px] justify-between rounded"
+            className="flex flex-col overflow-hidden w-[100px] h-[300px] justify-between rounded"
+            style={{ backgroundColor: "#000" }}
           >
             {[0, 1, 2].map((i) => {
               const img = images[startIdx + i];
@@ -39,7 +63,10 @@ const LayoutA: React.FC<LayoutAProps> = ({ images }) => {
                 </div>
               );
             })}
-            <div className="text-[10px] text-center text-white bg-black py-1 whitespace-pre-line">
+            <div
+              className="text-[10px] text-center py-1"
+              style={{ color: "#fff", backgroundColor: "#000" }}
+            >
               {caption}
             </div>
           </div>

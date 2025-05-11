@@ -20,29 +20,31 @@ const DownloadLayout: React.FC<DownloadLayoutProps> = ({ targetRef }) => {
       const layoutWidth = targetRef.current.offsetWidth;
       const layoutHeight = targetRef.current.offsetHeight;
 
-      // Use html2canvas to capture the layout
+      // Increase the scale factor to simulate "zooming in"
+      const scaleFactor = 2;  // Adjust this value for more or less zoom
+
+      // Capture the layout with zoom applied
       html2canvas(targetRef.current, {
-        x: 0,  // Capture from the top-left corner
-        y: 0,  // Capture from the top-left corner
-        width: layoutWidth,  // Use exact width of the component
-        height: layoutHeight, // Use exact height of the component
-        scale: window.devicePixelRatio, // Ensure high resolution for the image
-        backgroundColor: null, // Ensure no background color (transparent if required)
-        logging: false, // Disable console logs from html2canvas
-        useCORS: true, // Enable CORS if loading external images
-        letterRendering: 1, // For better text rendering (if applicable)
+        logging: false, // Disable logging for cleaner output
+        useCORS: true, // Enable CORS to allow external image rendering
+        backgroundColor: null, // Transparent background
+        width: layoutWidth * scaleFactor, // Increase width for zoom
+        height: layoutHeight * scaleFactor, // Increase height for zoom
+        x: 0, // Start capturing from the top-left corner
+        y: 0, // Start capturing from the top-left corner
+        scale: scaleFactor, // Zoom in by increasing the scale
+        letterRendering: 1, // Improved text rendering
         ignoreElements: (el) => {
-          // Ignore the Download Layout button itself
-          if (el.tagName === 'BUTTON') {
+          // Ignore the button that triggers the download itself
+          if (el.tagName === "BUTTON") {
             return true;
           }
           return false;
-        }
+        },
+        // Allow us to capture the exact layout without distortion
       }).then((canvas) => {
-        // Convert the canvas to a data URL (image)
+        // Convert the canvas to a data URL and save the image
         const layoutImage = canvas.toDataURL("image/png");
-
-        // Save the layout image
         saveAs(layoutImage, "layout.png");
       }).catch((error) => {
         console.error("Error while capturing layout: ", error);
