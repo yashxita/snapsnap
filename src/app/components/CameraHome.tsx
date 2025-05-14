@@ -20,8 +20,9 @@ const filters = [
   {
     name: "Retro Reddish",
     css: "contrast(1.6) brightness(0.9) hue-rotate(-10deg) saturate(1.7)",
-    className: "contrast-[1.6] brightness-[0.9] hue-rotate-[-10deg] saturate-[1.7]",
-  }
+    className:
+      "contrast-[1.6] brightness-[0.9] hue-rotate-[-10deg] saturate-[1.7]",
+  },
 ];
 
 const CameraHome: React.FC = () => {
@@ -119,13 +120,13 @@ const CameraHome: React.FC = () => {
   };
 
   return (
-    <div className="h-auto w-screen bg-[#fbd6e3] p-8 min-h-screen font-press text-[#fff] cursor-pixel">
+    <div className="h-auto w-screen bg-pink-200 min-h-screen font-press text-[#fff] cursor-pixel flex items-center justify-center">
       {!selectedLayout ? (
         <div className="flex flex-col items-center space-y-6">
           <h1 className="text-2xl font-bold text-[#ff69b4]">
             🎮 Choose Your Layout
           </h1>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="flex gap-[64px]">
             {layouts.map((layout) => (
               <button
                 key={layout.name}
@@ -142,11 +143,10 @@ const CameraHome: React.FC = () => {
           </div>
         </div>
       ) : isCameraActive ? (
-        <div className="flex flex-col items-center space-y-6">
+        <div className="flex flex-col items-center  ">
           <video
             ref={videoRef}
-            width={600}
-            height={height || undefined}
+            height={500}
             autoPlay
             playsInline
             className={`rounded border shadow transform -scale-x-100 ${
@@ -156,20 +156,19 @@ const CameraHome: React.FC = () => {
           />
           <button
             onClick={handleImageClick}
-            className="bg-pink-600 px-6 py-3 text-white border-[3px] border-pink-800 shadow-[4px_4px_0px_#a94464] hover:bg-pink-700"
+            className="bg-pink-600 px-6 py-6 text-white border-pink-800 shadow-[4px_4px_0px_#a94464] mt-[40px]"
             style={{ fontFamily: "Mangerine" }}
           >
             📸 SNAP!
           </button>
           <canvas ref={canvasRef} className="hidden" />
 
-          <div className="flex space-x-3">
+          <div className="flex gap-[12px] mt-[30px] flex-wrap">
             {filters.map((filter) => (
               <button
                 key={filter.name}
                 onClick={() => handleFilterChange(filter.name.toLowerCase())}
-                className="bg-pink-400 text-white px-4 py-2 border border-pink-700 hover:bg-pink-500"
-                style={{ fontFamily: "'Press Start 2P', cursive" }}
+                className="bg-[#ff4d8b] text-[#2d0d34] border-4 border-[#6b1e50] px-8 py-4 rounded-[6px] shadow-[4px_4px_0_#6b1e50] active:shadow-none  text-[20px]  font-press"
               >
                 {filter.name.toUpperCase()}
               </button>
@@ -195,7 +194,7 @@ const CameraHome: React.FC = () => {
               ?.requiredImages || 1) && (
             <button
               onClick={() => setIsCameraActive(false)}
-              className="mt-4 bg-green-600 text-white px-6 py-3 border-[3px] border-green-800 shadow-[4px_4px_0px_#1b5e20] hover:bg-green-700"
+              className="bg-green-600 text-white px-6 py-3 border-[3px] border-green-800 shadow-[4px_4px_0px_#1b5e20] hover:bg-green-700"
               style={{ fontFamily: "'Press Start 2P', cursive" }}
             >
               ✅ FINALIZE
@@ -203,11 +202,25 @@ const CameraHome: React.FC = () => {
           )}
         </div>
       ) : (
-        <div className="mt-6 flex justify-center w-full" ref={layoutRef}>
-          <LayoutDisplay />
-          <DownloadLayout
-            targetRef={layoutRef as React.RefObject<HTMLElement>}
-          />
+        <div className="relative bg-pink-200 justify-center items-center overflow-hidden h-full w-full">
+          <h1>Here's your generated layout</h1>
+          <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
+            <div className="w-[800px] h-[800px] rounded-full bg-pink-500 opacity-60 blur-[180px]" />
+          </div>
+          <div className="absolute bottom-0 left-0 w-full h-40 bg-gradient-to-t from-pink-300 to-transparent z-0" />
+          <div className="relative z-10 flex flex-row items-center justify-between w-full px-10">
+            <div
+              ref={layoutRef}
+              className="transform -rotate-6 -translate-x-8 scale-75 transition-all duration-300 ease-in-out ml-40"
+            >
+              <LayoutDisplay />
+            </div>
+            <div className="ml-6">
+              <DownloadLayout
+                targetRef={layoutRef as React.RefObject<HTMLElement>}
+              />
+            </div>
+          </div>
         </div>
       )}
     </div>

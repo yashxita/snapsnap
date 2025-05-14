@@ -1,13 +1,11 @@
-@import "tailwindcss";
-
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@tailwind utilities;
 
 body {
   background-color: #fbd6e3;
   font-family: "Press Start 2P", cursive;
 }
 
-
-
-*{
+* {
   cursor: url("/cursor-pixel1.cur") 0 0, auto !important;
 }
